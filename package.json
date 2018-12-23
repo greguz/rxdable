@@ -1,0 +1,48 @@
+{
+  "name": "rxdable",
+  "version": "0.1.0",
+  "description": "Create a Node.js readable stream from a Rx.js observable",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
+    "types": "rimraf types && tsc --emitDeclarationOnly --declaration --declarationDir types",
+    "build": "rimraf dist && tsc",
+    "prepublishOnly": "npm run test && npm run types && npm run build"
+  },
+  "keywords": [
+    "stream",
+    "rx",
+    "observable",
+    "node",
+    "readable"
+  ],
+  "author": "Giacomo Gregoletto",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^8.10.38",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "rimraf": "^2.6.2",
+    "rxjs": "^6.3.3",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
+  },
+  "peerDependencies": {
+    "rxjs": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
