@@ -49,12 +49,19 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
   /**
    * Rx.js source stream
    */
-  public observable: Observable<T>;
+  public readonly observable: Observable<T>;
 
   /**
    * Rx.js subscription, generated when the readable go into "flowing" state
    */
-  public subscription: Subscription | null = null;
+  public get subscription(): Subscription | null {
+    return this._subscription;
+  }
+
+  /**
+   * Rx.js subscription, generated when the readable go into "flowing" state
+   */
+  private _subscription: Subscription | null = null;
 
   /**
    * Array used as buffer for Node.js backpressure mechanism
@@ -86,8 +93,8 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
     this._flowing = true;
 
     // Ensure single observable subscription
-    if (!this.subscription) {
-      this.subscription = this.observable.subscribe(
+    if (!this._subscription) {
+      this._subscription = this.observable.subscribe(
         value => {
           this._push(value);
         },
@@ -110,8 +117,8 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
    * Called by the internal Readable class methods
    */
   public _destroy(error: Error | null, callback: (error?: Error) => void) {
-    if (this.subscription && !this.subscription.closed) {
-      this.subscription.unsubscribe();
+    if (this._subscription && !this._subscription.closed) {
+      this._subscription.unsubscribe();
     }
     callback(error || undefined);
   }
