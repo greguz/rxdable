@@ -1,5 +1,5 @@
 import { Observable, Subscription } from "rxjs";
-import { Readable } from "stream";
+import { Readable, Stream } from "stream";
 
 /**
  * Standard Node.js readable stream with types for data event
@@ -140,7 +140,7 @@ function noop(): void {}
  * Subscribe to a Node.js stream
  */
 export function subscribeToStream<T = any>(
-  stream: NodeJS.ReadableStream,
+  stream: Stream,
   next?: (value: T) => void | null | undefined,
   error?: (error: any) => void | null | undefined,
   complete?: () => void | null | undefined
