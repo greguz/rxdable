@@ -6,9 +6,9 @@ import * as os from "os";
 import { createWriteStream, readFileSync, unlinkSync } from "fs";
 import { from } from "rxjs";
 
-import { getReadableByObservable } from "./index";
+import { getReadableByObservable } from "./getReadableByObservable";
 
-describe("Rxdable", () => {
+describe("getReadableByObservable", () => {
   it("should work", async () => {
     const file = path.join(os.tmpdir(), "tx-to-node.test");
     const encoding = "utf8";
