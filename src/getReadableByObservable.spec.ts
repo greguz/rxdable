@@ -10,7 +10,7 @@ import { getReadableByObservable } from "./getReadableByObservable";
 
 describe("getReadableByObservable", () => {
   it("should work", async () => {
-    const file = path.join(os.tmpdir(), "tx-to-node.test");
+    const file = path.join(os.tmpdir(), "getReadableByObservable.test");
     const encoding = "utf8";
     const observable = from([
       "It's fun to stay at the ",
