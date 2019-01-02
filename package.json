@@ -12,11 +12,15 @@
     "prepublishOnly": "npm run test && npm run types && npm run build"
   },
   "keywords": [
-    "stream",
     "rx",
+    "rxjs",
     "observable",
     "node",
-    "readable"
+    "stream",
+    "readable",
+    "writable",
+    "duplex",
+    "transform"
   ],
   "author": "Giacomo Gregoletto",
   "license": "MIT",

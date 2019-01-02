@@ -34,7 +34,7 @@ function fileRead(file, encoding = "utf8") {
 }
 ```
 
-## Writable/Transform/Duplex stream as operator
+## Writable/Duplex/Transform stream as operator
 
 ```javascript
 const { createWriteStream } = require("fs");
