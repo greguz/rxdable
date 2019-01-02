@@ -1,7 +1,7 @@
 {
   "name": "rxdable",
   "version": "0.2.1",
-  "description": "Create a Node.js readable stream from a Rx.js observable",
+  "description": "Utility lib to work with Node.js streams and Rx.js",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
   "scripts": {

@@ -1,13 +1,13 @@
 # rxdable
 
-Create a Node.js **Readable** stream from a Rx.js **Observable**
+Utility lib to work with Node.js streams and Rx.js.
 
-- Works with Node.js >= 8.x and Rx.js 6.x
+- Node.js >= 8.x
+- Rx.js 6.x
 - Zero dependencies
 - TypeScript support
-- Returns a typed readable stream
 
-## Observable to Readable
+## Observable to Readable stream
 
 ```javascript
 const { getReadableByObservable } = require("rxdable");
@@ -15,11 +15,11 @@ const { getReadableByObservable } = require("rxdable");
 const readableStream = getReadableByObservable(sourceObservable);
 ```
 
-## Readable to Observable
+## Readable stream to Observable
 
 ```javascript
-const { subscribeToStream } = require("rxdable");
 const { createReadStream } = require("fs");
+const { subscribeToStream } = require("rxdable");
 const { Observable } = require("rxjs");
 
 function readFile(file, encoding = "utf8") {
@@ -31,5 +31,36 @@ function readFile(file, encoding = "utf8") {
       () => subscriber.complete()
     );
   });
+}
+```
+
+## Transform/Duplex stream as operator
+
+```javascript
+const { createWriteStream } = require("fs");
+const { subscribeToStream } = require("rxdable");
+const { Observable } = require("rxjs");
+
+export function writeFile(file, encoding = "utf8") {
+  return source => {
+    return new Observable(subscriber => {
+      const stream = createWriteStream(file, encoding);
+
+      const sub0 = subscribeToStream(
+        stream,
+        null,
+        error => subscriber.error(error),
+        () => subscriber.complete()
+      );
+
+      const sub1 = source.subscribe(
+        chunk => stream.write(chunk),
+        error => stream.destroy(error),
+        () => stream.end()
+      );
+
+      return sub0.add(sub1);
+    });
+  };
 }
 ```
