@@ -7,11 +7,14 @@ function noop() {}
  * Validate stream type and return the correct end event
  */
 function guessEndEvent(stream: any): string {
-  if (stream instanceof Writable) {
-    return "finish";
-  } else if (stream instanceof Readable) {
+  if (stream instanceof Readable) {
+    // Readable or Duplex or Transform stream instance
     return "end";
+  } else if (stream instanceof Writable) {
+    // Pure Writable stream instance
+    return "finish";
   } else {
+    // Not a standard Node.js stream instance
     throw new Error("The first argument must be a stream");
   }
 }
