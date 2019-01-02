@@ -22,7 +22,7 @@ const { createReadStream } = require("fs");
 const { subscribeToStream } = require("rxdable");
 const { Observable } = require("rxjs");
 
-function readFile(file, encoding = "utf8") {
+function fileRead(file, encoding = "utf8") {
   return new Observable(subscriber => {
     return subscribeToStream(
       createReadStream(file, encoding),
@@ -41,7 +41,7 @@ const { createWriteStream } = require("fs");
 const { subscribeToStream } = require("rxdable");
 const { Observable } = require("rxjs");
 
-export function writeFile(file, encoding = "utf8") {
+function fileWrite(file, encoding = "utf8") {
   return source => {
     return new Observable(subscriber => {
       const stream = createWriteStream(file, encoding);
