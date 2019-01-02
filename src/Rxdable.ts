@@ -92,10 +92,10 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
   /**
    * Called by the internal Readable class methods
    */
-  public _destroy(error: Error | null, callback: (error?: Error) => void) {
+  public _destroy(error: any, callback: (error?: any) => void) {
     if (this._subscription && !this._subscription.closed) {
       this._subscription.unsubscribe();
     }
-    callback(error || undefined);
+    callback(error);
   }
 }
