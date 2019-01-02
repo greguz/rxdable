@@ -1,17 +1,33 @@
 import { Subscription } from "rxjs";
-import { Stream } from "stream";
+import { Readable, Stream, Writable } from "stream";
 
 function noop() {}
+
+/**
+ * Validate stream type and return the correct end event
+ */
+function guessEndEvent(stream: any): string {
+  if (stream instanceof Writable) {
+    return "finish";
+  } else if (stream instanceof Readable) {
+    return "end";
+  } else {
+    throw new Error("The first argument must be a stream");
+  }
+}
 
 /**
  * Subscribe to a Node.js stream
  */
 export function subscribeToStream<T = any>(
   stream: Stream,
-  next?: (value: T) => void | null | undefined,
-  error?: (error: any) => void | null | undefined,
-  complete?: () => void | null | undefined
+  next?: ((value: T) => void) | null | undefined,
+  error?: ((error: any) => void) | null | undefined,
+  complete?: (() => void) | null | undefined
 ) {
+  // Guess the correct end event to listen
+  const endEvent = guessEndEvent(stream);
+
   // Stream event listeners
   const onData = next ? (data: T) => next(data) : noop;
   const onError = error ? (err: any) => error(err) : noop;
@@ -21,7 +37,7 @@ export function subscribeToStream<T = any>(
   stream
     .on("data", onData)
     .once("error", onError)
-    .once("end", onEnd);
+    .once(endEvent, onEnd);
 
   // Return the subscription
   return new Subscription(() => {
@@ -29,6 +45,6 @@ export function subscribeToStream<T = any>(
     stream
       .removeListener("data", onData)
       .removeListener("error", onError)
-      .removeListener("end", onEnd);
+      .removeListener(endEvent, onEnd);
   });
 }
