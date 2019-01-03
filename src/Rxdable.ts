@@ -64,7 +64,7 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
           this._push(value);
         },
         error => {
-          this.emit("error", error);
+          process.nextTick(() => this.emit("error", error));
         },
         () => {
           this._push(null);
