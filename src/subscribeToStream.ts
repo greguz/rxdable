@@ -1,6 +1,7 @@
 import { Subscription } from "rxjs";
 import { Readable, Stream, Writable } from "stream";
 
+// tslint:disable-next-line
 function noop() {}
 
 /**

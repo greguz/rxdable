@@ -15,24 +15,9 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
   }
 
   /**
-   * @constructor
-   */
-  constructor(source: Observable<T>) {
-    super({ objectMode: true });
-    this.observable = source;
-  }
-
-  /**
    * Rx.js source stream
    */
   public readonly observable: Observable<T>;
-
-  /**
-   * Rx.js subscription, generated when the readable go into "flowing" state
-   */
-  public get subscription() {
-    return this._subscription;
-  }
 
   /**
    * Rx.js subscription, generated when the readable go into "flowing" state
@@ -51,14 +36,18 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
   private _flowing = false;
 
   /**
-   * Process a single stream entry (and null for stream's end)
+   * @constructor
    */
-  private _push(value: T | null) {
-    if (this._flowing === true && this._buffer.length === 0) {
-      this._flowing = this.push(value);
-    } else {
-      this._buffer.push(value);
-    }
+  constructor(source: Observable<T>) {
+    super({ objectMode: true });
+    this.observable = source;
+  }
+
+  /**
+   * Rx.js subscription, generated when the readable go into "flowing" state
+   */
+  public get subscription() {
+    return this._subscription;
   }
 
   /**
@@ -97,5 +86,16 @@ export class Rxdable<T> extends Readable implements TypedReadable<T> {
       this._subscription.unsubscribe();
     }
     callback(error);
+  }
+
+  /**
+   * Process a single stream entry (and null for stream's end)
+   */
+  private _push(value: T | null) {
+    if (this._flowing === true && this._buffer.length === 0) {
+      this._flowing = this.push(value);
+    } else {
+      this._buffer.push(value);
+    }
   }
 }
