@@ -1,5 +1,5 @@
 import { Subscription } from "rxjs";
-import { Readable, Stream, Writable } from "stream";
+import { Readable, Writable } from "stream";
 
 // tslint:disable-next-line
 function noop() {}
@@ -7,7 +7,7 @@ function noop() {}
 /**
  * Validate stream type and return the correct end event
  */
-function guessEndEvent(stream: any): string {
+function guessEndEvent(stream: any) {
   if (stream instanceof Readable) {
     // Readable or Duplex or Transform stream instance
     return "end";
@@ -24,7 +24,7 @@ function guessEndEvent(stream: any): string {
  * Subscribe to a Node.js stream
  */
 export function subscribeToStream<T = any>(
-  stream: Stream,
+  stream: Readable | Writable,
   next?: ((value: T) => void) | null | undefined,
   error?: ((error: any) => void) | null | undefined,
   complete?: (() => void) | null | undefined
