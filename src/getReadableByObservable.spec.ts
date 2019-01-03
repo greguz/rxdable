@@ -1,16 +1,15 @@
 import "mocha";
 import { expect } from "chai";
 
-import { fill, once } from "lodash";
+import { fill } from "lodash";
 import { Writable } from "stream";
 import { from, Observable } from "rxjs";
+import * as pump from "pump";
 
 import { getReadableByObservable } from "./getReadableByObservable";
 
 describe("getReadableByObservable", () => {
   it("should work", done => {
-    done = once(done);
-
     // Fast-firing observable
     const observable = from(fill(new Array(50), "x"));
 
@@ -26,25 +25,11 @@ describe("getReadableByObservable", () => {
       }
     });
 
-    // Clean-up utility
-    function complete(error?: any) {
-      readable.destroy();
-      writable.destroy();
-      done(error);
-    }
-
-    // Watch streams
-    readable.once("error", complete);
-    writable.once("error", complete);
-    writable.once("finish", complete);
-
-    // Start data flow
-    readable.pipe(writable);
+    // And pump it (louder)
+    pump(readable, writable, done);
   });
 
   it("should handle observable errors", done => {
-    done = once(done);
-
     // Observable that will explode
     const observable = new Observable<number>(subscriber => {
       setTimeout(() => subscriber.error(new Error("Kill 'Em All")), 10);
@@ -61,29 +46,17 @@ describe("getReadableByObservable", () => {
       }
     });
 
-    // Clean-up utility
-    function complete(error?: any) {
-      readable.destroy();
-      writable.destroy();
+    // And pump it (louder)
+    pump(readable, writable, error => {
       if (error instanceof Error && error.message === "Kill 'Em All") {
         done();
       } else {
         done(error);
       }
-    }
-
-    // Watch streams
-    readable.once("error", complete);
-    writable.once("error", complete);
-    writable.once("finish", complete);
-
-    // Start data flow
-    readable.pipe(writable);
+    });
   });
 
   it("should unsubscribe from the observable", done => {
-    done = once(done);
-
     // Subscription status
     let unsubscribed = false;
 
@@ -110,20 +83,15 @@ describe("getReadableByObservable", () => {
       }
     });
 
-    // Clean-up utility
-    function complete() {
-      readable.destroy();
-      writable.destroy();
+    // And pump it (louder)
+    pump(readable, writable, error => {
       expect(unsubscribed).to.equal(true);
-      done();
-    }
 
-    // Watch streams
-    readable.once("error", complete);
-    writable.once("error", complete);
-    writable.once("finish", complete);
-
-    // Start data flow
-    readable.pipe(writable);
+      if (error instanceof Error && error.message === "Kill 'Em All") {
+        done();
+      } else {
+        done(error);
+      }
+    });
   });
 });
