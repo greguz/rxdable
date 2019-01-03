@@ -77,7 +77,7 @@ describe("getReadableByObservable", () => {
     readable.pipe(writable);
   });
 
-  it("should unsubscribe from the observable", function(done) {
+  it("should unsubscribe from the observable", done => {
     // Subscription status
     let unsubscribed = false;
 
