@@ -8,6 +8,10 @@ import { toArray } from "rxjs/operators";
 import { subscribeToStream } from "./subscribeToStream";
 
 describe("subscribeToStream", () => {
+  it("should check stream type", () => {
+    expect(() => subscribeToStream({} as any)).to.throw();
+  });
+
   it("should work with readables", async () => {
     const observable = new Observable<string>(subscriber => {
       const readable = new Readable({
