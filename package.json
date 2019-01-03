@@ -9,7 +9,8 @@
     "test:lint": "tslint -c tslint.json src/**/*.ts",
     "test:unit": "mocha -r ts-node/register src/**/*.spec.ts",
     "test:coverage": "nyc mocha --require ts-node/register --require source-map-support/register --recursive **/*.spec.ts",
-    "test": "npm run test:ts && npm run test:lint && npm run test:unit",
+    "test": "npm run test:ts && npm run test:lint && npm run test:coverage",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "types": "rimraf types && tsc --emitDeclarationOnly --declaration --declarationDir types",
     "build": "rimraf dist && tsc",
     "prepublishOnly": "npm run test && npm run types && npm run build"
@@ -32,6 +33,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.38",
     "chai": "^4.2.0",
+    "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
     "rimraf": "^2.6.2",
@@ -67,7 +69,8 @@
       "**/*.d.ts"
     ],
     "reporter": [
-      "html"
+      "html",
+      "text"
     ],
     "all": true
   }
