@@ -1,5 +1,7 @@
 # rxdable
 
+[![npm version](https://badge.fury.io/js/rxdable.svg)](https://badge.fury.io/js/rxdable)
+
 Utility lib to work with Node.js streams and Rx.js.
 
 - Node.js >= 8.x
