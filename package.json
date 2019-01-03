@@ -8,6 +8,7 @@
     "test:ts": "tsc --noEmit",
     "test:lint": "tslint -c tslint.json src/**/*.ts",
     "test:unit": "mocha -r ts-node/register src/**/*.spec.ts",
+    "test:coverage": "nyc mocha --require ts-node/register --require source-map-support/register --recursive **/*.spec.ts",
     "test": "npm run test:ts && npm run test:lint && npm run test:unit",
     "types": "rimraf types && tsc --emitDeclarationOnly --declaration --declarationDir types",
     "build": "rimraf dist && tsc",
@@ -32,8 +33,10 @@
     "@types/node": "^8.10.38",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
+    "source-map-support": "^0.5.9",
     "ts-node": "^7.0.1",
     "tslint": "^5.12.0",
     "typescript": "^3.2.2"
@@ -51,5 +54,21 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/greguz/rxdable.git"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "include": [
+      "src"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }
