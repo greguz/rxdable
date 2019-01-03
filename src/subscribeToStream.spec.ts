@@ -1,9 +1,7 @@
 import "mocha";
 import { expect } from "chai";
 
-import * as os from "os";
-import * as path from "path";
-import * as fs from "fs";
+import { Readable, Writable } from "stream";
 import { Observable } from "rxjs";
 import { toArray } from "rxjs/operators";
 
@@ -11,43 +9,49 @@ import { subscribeToStream } from "./subscribeToStream";
 
 describe("subscribeToStream", () => {
   it("should work with readables", async () => {
-    const observable = new Observable<string>(subscriber =>
-      subscribeToStream(
-        fs.createReadStream(__filename, "utf8"),
+    const observable = new Observable<string>(subscriber => {
+      const readable = new Readable({
+        objectMode: true,
+        read() {
+          for (let i = 65; i <= 90; i++) {
+            this.push(String.fromCharCode(i));
+          }
+          this.push(null);
+        }
+      });
+
+      return subscribeToStream(
+        readable,
         chunk => subscriber.next(chunk),
         error => subscriber.error(error),
         () => subscriber.complete()
-      )
-    );
+      );
+    });
 
     const chunks = await observable.pipe(toArray()).toPromise();
 
-    const text = chunks.join("");
-
-    expect(text).to.match(/But in the end, it doesn't even matter/);
+    for (let i = 0; i < chunks.length; i++) {
+      expect(chunks[i]).to.equal(String.fromCharCode(i + 65));
+    }
   });
 
-  it("should work with writables", async () => {
-    const file = path.join(os.tmpdir(), "subscribeToStream.test");
-    const encoding = "utf8";
+  it("should work with writables", done => {
+    const writable = new Writable({
+      objectMode: true,
+      write(chunk, encoding, callback) {
+        callback();
+      }
+    });
 
-    await new Promise((resolve, reject) =>
-      subscribeToStream(
-        fs
-          .createReadStream(__filename, encoding)
-          .pipe(fs.createWriteStream(file, encoding)),
-        null,
-        reject,
-        resolve
-      )
-    );
+    let i = 0;
+    const timer = setInterval(() => {
+      writable.write(i++);
+      if (i >= 10) {
+        clearInterval(timer);
+        writable.end();
+      }
+    }, 100);
 
-    const text = fs.readFileSync(file, encoding);
-
-    fs.unlinkSync(file);
-
-    expect(text).to.match(/But in the end, it doesn't even matter/);
+    subscribeToStream(writable, null, done, done);
   });
 });
-
-// But in the end, it doesn't even matter
