@@ -1,6 +1,6 @@
 # rxdable
 
-[![npm version](https://badge.fury.io/js/rxdable.svg)](https://badge.fury.io/js/rxdable) [![Build Status](https://travis-ci.com/greguz/rxdable.svg?branch=master)](https://travis-ci.com/greguz/rxdable) [![Coverage Status](https://coveralls.io/repos/github/greguz/rxdable/badge.svg?branch=master)](https://coveralls.io/github/greguz/rxdable?branch=master)
+[![npm version](https://badge.fury.io/js/rxdable.svg)](https://badge.fury.io/js/rxdable) [![Build Status](https://travis-ci.com/greguz/rxdable.svg?branch=master)](https://travis-ci.com/greguz/rxdable) [![Coverage Status](https://coveralls.io/repos/github/greguz/rxdable/badge.svg?branch=master)](https://coveralls.io/github/greguz/rxdable?branch=master) [![Dependencies Status](https://david-dm.org/greguz/rxdable.svg)](https://david-dm.org/greguz/rxdable.svg)
 
 Utility lib to work with Node.js streams and Rx.js.
 
