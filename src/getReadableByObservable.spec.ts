@@ -1,7 +1,7 @@
 import "mocha";
 import { expect } from "chai";
 
-import { fill } from "lodash";
+import { fill, once } from "lodash";
 import { Writable } from "stream";
 import { from, Observable } from "rxjs";
 
@@ -9,6 +9,8 @@ import { getReadableByObservable } from "./getReadableByObservable";
 
 describe("getReadableByObservable", () => {
   it("should work", done => {
+    done = once(done);
+
     // Fast-firing observable
     const observable = from(fill(new Array(50), "x"));
 
@@ -41,6 +43,8 @@ describe("getReadableByObservable", () => {
   });
 
   it("should handle observable errors", done => {
+    done = once(done);
+
     // Observable that will explode
     const observable = new Observable<number>(subscriber => {
       setTimeout(() => subscriber.error(new Error("Kill 'Em All")), 10);
@@ -78,6 +82,8 @@ describe("getReadableByObservable", () => {
   });
 
   it("should unsubscribe from the observable", done => {
+    done = once(done);
+
     // Subscription status
     let unsubscribed = false;
 
