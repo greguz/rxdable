@@ -50,5 +50,8 @@ export function subscribeToStream<T = any>(
       .removeListener("data", onData)
       .removeListener("error", onError)
       .removeListener(endEvent, onEnd);
+
+    // Free resources
+    stream.destroy();
   });
 }
