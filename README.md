@@ -39,9 +39,9 @@ function fileRead(file, encoding = "utf8") {
 ## Readable stream to Observable (fast way)
 
 ```javascript
-const { getObservableByReadable } = require("rxdable");
+const { getObservableByStream } = require("rxdable");
 
-const observable = getObservableByReadable(readableStream);
+const observable = getObservableByStream(readableStream);
 ```
 
 The usage of this API is discouraged, because a Node.js stream is able to be consumed just one time, but an Observable is able to be subscribed more than once.

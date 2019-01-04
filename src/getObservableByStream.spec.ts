@@ -4,11 +4,11 @@ import { expect } from "chai";
 import { Readable } from "stream";
 import { toArray } from "rxjs/operators";
 
-import { getObservableByReadable } from "./getObservableByReadable";
+import { getObservableByStream } from "./getObservableByStream";
 
-describe("getObservableByReadable", () => {
+describe("getObservableByStream", () => {
   it("should check stream type", () => {
-    expect(() => getObservableByReadable({} as any)).to.throw();
+    expect(() => getObservableByStream({} as any)).to.throw();
   });
 
   it("should work", async () => {
@@ -22,7 +22,7 @@ describe("getObservableByReadable", () => {
       }
     });
 
-    const observable = getObservableByReadable<string>(readable);
+    const observable = getObservableByStream<string>(readable);
 
     const chunks = await observable.pipe(toArray()).toPromise();
 
@@ -39,7 +39,7 @@ describe("getObservableByReadable", () => {
       }
     });
 
-    const observable = getObservableByReadable<void>(readable);
+    const observable = getObservableByStream<void>(readable);
 
     await observable.toPromise();
 
@@ -69,7 +69,7 @@ describe("getObservableByReadable", () => {
       }
     });
 
-    const observable = getObservableByReadable<void>(readable);
+    const observable = getObservableByStream<void>(readable);
 
     observable.subscribe(
       undefined,

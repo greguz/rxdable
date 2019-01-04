@@ -6,7 +6,7 @@ import { subscribeToStream } from "./subscribeToStream";
 /**
  * Get an Observable from a Readable/Duplex/Transform stream instance
  */
-export function getObservableByReadable<T = any>(readable: Readable | null) {
+export function getObservableByStream<T = any>(readable: Readable | null) {
   // Validate stream type
   if (!(readable instanceof Readable)) {
     throw new Error("Argument is not a readable stream");
