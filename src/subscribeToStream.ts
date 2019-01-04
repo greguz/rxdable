@@ -33,9 +33,9 @@ export function subscribeToStream<T = any>(
   const endEvent = guessEndEvent(stream);
 
   // Stream event listeners
-  const onData = next ? (data: T) => next(data) : noop;
-  const onError = error ? (err: any) => error(err) : noop;
-  const onEnd = complete ? () => complete() : noop;
+  const onData = next || noop;
+  const onError = error || noop;
+  const onEnd = complete || noop;
 
   // Register event listeners
   stream
