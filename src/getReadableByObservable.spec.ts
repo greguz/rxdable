@@ -15,7 +15,6 @@ describe("getReadableByObservable", () => {
 
     // Cast to readable
     const readable = getReadableByObservable(observable);
-    expect(readable.subscription).to.equal(null);
 
     // Slow-ass writable
     const writable = new Writable({
