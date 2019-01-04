@@ -5,6 +5,6 @@ import { Rxdable } from "./Rxdable";
 /**
  * Create a Node.js readable stream from a Rx.js observable
  */
-export function getReadableByObservable<T>(source: Observable<T>) {
+export function getStreamByObservable<T>(source: Observable<T>) {
   return new Rxdable(source);
 }

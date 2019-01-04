@@ -12,9 +12,9 @@ Utility lib to work with Node.js streams and Rx.js.
 ## Observable to Readable stream
 
 ```javascript
-const { getReadableByObservable } = require("rxdable");
+const { getStreamByObservable } = require("rxdable");
 
-const readableStream = getReadableByObservable(observable);
+const readableStream = getStreamByObservable(observable);
 ```
 
 ## Readable stream to Observable (recommend way)

@@ -6,15 +6,15 @@ import { Writable } from "stream";
 import { from, Observable } from "rxjs";
 import * as pump from "pump";
 
-import { getReadableByObservable } from "./getReadableByObservable";
+import { getStreamByObservable } from "./getStreamByObservable";
 
-describe("getReadableByObservable", () => {
+describe("getStreamByObservable", () => {
   it("should work", done => {
     // Fast-firing observable
     const observable = from(fill(new Array(50), "x"));
 
     // Cast to readable
-    const readable = getReadableByObservable(observable);
+    const readable = getStreamByObservable(observable);
 
     // Slow-ass writable
     const writable = new Writable({
@@ -35,7 +35,7 @@ describe("getReadableByObservable", () => {
     });
 
     // Convert to readable
-    const readable = getReadableByObservable(observable);
+    const readable = getStreamByObservable(observable);
 
     // Empty writable
     const writable = new Writable({
@@ -72,7 +72,7 @@ describe("getReadableByObservable", () => {
     });
 
     // Convert to readable
-    const readable = getReadableByObservable(observable);
+    const readable = getStreamByObservable(observable);
 
     // Will-explode writable
     const writable = new Writable({
