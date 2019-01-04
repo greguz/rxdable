@@ -14,10 +14,10 @@ Utility lib to work with Node.js streams and Rx.js.
 ```javascript
 const { getReadableByObservable } = require("rxdable");
 
-const readableStream = getReadableByObservable(sourceObservable);
+const readableStream = getReadableByObservable(observable);
 ```
 
-## Readable stream to Observable
+## Readable stream to Observable (recommend way)
 
 ```javascript
 const { createReadStream } = require("fs");
@@ -35,6 +35,18 @@ function fileRead(file, encoding = "utf8") {
   });
 }
 ```
+
+## Readable stream to Observable (fast way)
+
+```javascript
+const { getObservableByReadable } = require("rxdable");
+
+const observable = getObservableByReadable(readableStream);
+```
+
+The usage of this API is discouraged, because a Node.js stream is able to be consumed just one time, but an Observable is able to be subscribed more than once.
+
+So this API create an Observable that is able to be subscribed just one time.
 
 ## Writable/Duplex/Transform stream as operator
 
