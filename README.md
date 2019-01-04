@@ -48,7 +48,16 @@ The usage of this API is discouraged, because a Node.js stream is able to be con
 
 So this API create an Observable that is able to be subscribed just one time.
 
-## Writable/Duplex/Transform stream as operator
+## Operator to Transform stream
+
+```javascript
+const { count } = require("rxjs/operators");
+const { getTransformByOperator } = require("rxdable");
+
+const transformStream = getTransformByOperator(count());
+```
+
+## Writable/Duplex/Transform stream to operator
 
 ```javascript
 const { createWriteStream } = require("fs");
