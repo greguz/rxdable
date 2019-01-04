@@ -52,9 +52,9 @@ So this API create an Observable that is able to be subscribed just one time.
 
 ```javascript
 const { count } = require("rxjs/operators");
-const { getTransformByOperator } = require("rxdable");
+const { getStreamByOperator } = require("rxdable");
 
-const transformStream = getTransformByOperator(count());
+const transformStream = getStreamByOperator(count());
 ```
 
 ## Writable/Duplex/Transform stream to operator

@@ -3,3 +3,4 @@ export * from "./getStreamByObservable";
 export * from "./Rxdable";
 export * from "./subscribeToStream";
 export * from "./TypedReadable";
+export * from "./getStreamByOperator";

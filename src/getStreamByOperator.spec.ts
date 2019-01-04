@@ -6,9 +6,9 @@ import { count } from "rxjs/operators";
 import { Readable } from "stream";
 import * as pump from "pump";
 
-import { getTransformByOperator } from "./getTransformByOperator";
+import { getStreamByOperator } from "./getStreamByOperator";
 
-describe("getTransformByOperator", () => {
+describe("getStreamByOperator", () => {
   it("should work with aggregate operators", done => {
     const readable = new Readable({
       objectMode: true,
@@ -20,7 +20,7 @@ describe("getTransformByOperator", () => {
       }
     });
 
-    const transform = getTransformByOperator(count());
+    const transform = getStreamByOperator(count());
 
     transform.once("data", data => {
       expect(data).to.be.equal(3);
@@ -54,7 +54,7 @@ describe("getTransformByOperator", () => {
       }
     });
 
-    const transform = getTransformByOperator(delay(100));
+    const transform = getStreamByOperator(delay(100));
 
     pump(readable, transform, done);
   });
@@ -78,7 +78,7 @@ describe("getTransformByOperator", () => {
       }
     });
 
-    const transform = getTransformByOperator(explode());
+    const transform = getStreamByOperator(explode());
 
     pump(readable, transform, error => {
       if (error instanceof Error && error.message === "STOP") {
