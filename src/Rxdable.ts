@@ -8,13 +8,6 @@ import { TypedReadable } from "./TypedReadable";
  */
 export class Rxdable<T> extends Readable implements TypedReadable<T> {
   /**
-   * I'm lazy
-   */
-  public static from<X>(observable: Observable<X>) {
-    return new Rxdable<X>(observable);
-  }
-
-  /**
    * Rx.js source stream
    */
   public readonly observable: Observable<T>;
