@@ -61,7 +61,7 @@ describe("getObservableByReadable", () => {
     });
   });
 
-  it("should not subscribe twice", done => {
+  it("should handle readable errors", done => {
     const readable = new Readable({
       objectMode: true,
       read() {
