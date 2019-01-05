@@ -2,8 +2,8 @@ import { OperatorFunction } from "rxjs";
 
 import { Tranxform } from "./Tranxform";
 
-export function getStreamByOperator<A, B>(
-  ...operators: Array<OperatorFunction<A, B>>
+export function getStreamByOperator(
+  ...operators: Array<OperatorFunction<any, any>>
 ) {
   return new Tranxform(...operators);
 }
