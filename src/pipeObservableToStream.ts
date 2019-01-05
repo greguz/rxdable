@@ -19,7 +19,7 @@ export function pipeObservableToStream<T = any>(
   // Subscribe to the observable and write to the stream
   const s1 = observable.subscribe(
     data => stream.write(data),
-    error => stream.destroy(error),
+    err => stream.destroy(err),
     () => stream.end()
   );
 
