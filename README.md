@@ -57,33 +57,34 @@ const { getStreamByOperator } = require("rxdable");
 const transformStream = getStreamByOperator(count());
 ```
 
-## Writable/Duplex/Transform stream to operator
+## Writable/Duplex/Transform stream to operator (recommend way)
 
 ```javascript
 const { createWriteStream } = require("fs");
-const { subscribeToStream } = require("rxdable");
+const { pipeObservableToStream } = require("rxdable");
 const { Observable } = require("rxjs");
 
 function fileWrite(file, encoding = "utf8") {
-  return source => {
+  return observable => {
     return new Observable(subscriber => {
-      const stream = createWriteStream(file, encoding);
-
-      const sub0 = subscribeToStream(
-        stream,
+      return pipeObservableToStream(
+        observable,
+        createWriteStream(file, encoding),
         null,
         error => subscriber.error(error),
         () => subscriber.complete()
       );
-
-      const sub1 = source.subscribe(
-        chunk => stream.write(chunk),
-        error => stream.destroy(error),
-        () => stream.end()
-      );
-
-      return sub0.add(sub1);
     });
   };
 }
 ```
+
+## Writable/Duplex/Transform stream to operator (fast way)
+
+```javascript
+const { getOperatorByStream } = require("rxdable");
+
+const operator = getOperatorByStream(transformStream);
+```
+
+Same as **getObservableByStream** API.
