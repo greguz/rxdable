@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { from } from "rxjs";
 import { Transform } from "stream";
 
-import { getOperatorByStream } from "./getOperatorByStream";
+import { getOperatorByStream } from "./index";
 
 describe("getOperatorByStream", () => {
   it("should check stream type", () => {

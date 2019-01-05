@@ -5,7 +5,7 @@ import { Readable, Writable } from "stream";
 import { Observable } from "rxjs";
 import { toArray } from "rxjs/operators";
 
-import { subscribeToStream } from "./subscribeToStream";
+import { subscribeToStream } from "./index";
 
 describe("subscribeToStream", () => {
   it("should check stream type", () => {

@@ -6,7 +6,7 @@ import { Writable } from "stream";
 import { from, Observable } from "rxjs";
 import * as pump from "pump";
 
-import { getStreamByObservable } from "./getStreamByObservable";
+import { getStreamByObservable } from "./index";
 
 describe("getStreamByObservable", () => {
   it("should work", done => {

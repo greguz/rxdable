@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { Readable } from "stream";
 import { toArray } from "rxjs/operators";
 
-import { getObservableByStream } from "./getObservableByStream";
+import { getObservableByStream } from "./index";
 
 describe("getObservableByStream", () => {
   it("should check stream type", () => {

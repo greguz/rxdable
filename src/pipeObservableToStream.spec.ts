@@ -4,7 +4,7 @@ import "mocha";
 import { from, Observable } from "rxjs";
 import { Writable } from "stream";
 
-import { pipeObservableToStream } from "./pipeObservableToStream";
+import { pipeObservableToStream } from "./index";
 
 describe("pipeObservableToStream", () => {
   it("should work", done => {

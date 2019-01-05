@@ -6,7 +6,7 @@ import { count } from "rxjs/operators";
 import { Readable } from "stream";
 import * as pump from "pump";
 
-import { getStreamByOperator } from "./getStreamByOperator";
+import { getStreamByOperator } from "./index";
 
 describe("getStreamByOperator", () => {
   it("should work with aggregate operators", done => {
