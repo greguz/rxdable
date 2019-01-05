@@ -59,7 +59,8 @@ export function subscribeToStream<T = any>(
     if (tryAgain) {
       tryAgain = false;
     } else {
-      _done();
+      // Use setImmediate() to fix Node.js 8.x stream.destroy(error) bug
+      setImmediate(_done);
     }
   };
 
