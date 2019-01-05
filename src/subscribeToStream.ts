@@ -5,22 +5,6 @@ import { Readable, Writable } from "stream";
 function noop() {}
 
 /**
- * Validate stream type and return the correct end event
- */
-function guessEndEvent(stream: any) {
-  if (stream instanceof Readable) {
-    // Readable or Duplex or Transform stream instance
-    return "end";
-  } else if (stream instanceof Writable) {
-    // Pure Writable stream instance
-    return "finish";
-  } else {
-    // Not a standard Node.js stream instance
-    throw new Error("The first argument must be a stream");
-  }
-}
-
-/**
  * Subscribe to a Node.js stream
  */
 export function subscribeToStream<T = any>(
@@ -29,29 +13,67 @@ export function subscribeToStream<T = any>(
   error?: ((error: any) => void) | null | undefined,
   complete?: (() => void) | null | undefined
 ) {
-  // Guess the correct end event to listen
-  const endEvent = guessEndEvent(stream);
+  // Analyze the stream
+  const isReadable = stream instanceof Readable;
+  const isWritable = stream instanceof Writable;
 
-  // Stream event listeners
-  const onData = next || noop;
-  const onError = error || noop;
-  const onEnd = complete || noop;
+  // Validate stream type
+  if (!isReadable && !isWritable) {
+    throw new Error("The first argument must be a stream");
+  }
 
-  // Register event listeners
-  stream
-    .on("data", onData)
-    .once("error", onError)
-    .once(endEvent, onEnd);
+  // Arg defaults
+  const _next = next || noop;
+  const _error = error || noop;
+  const _complete = complete || noop;
 
-  // Return the subscription
-  return new Subscription(() => {
-    // Remove event listeners
-    stream
-      .removeListener("data", onData)
-      .removeListener("error", onError)
-      .removeListener(endEvent, onEnd);
+  // True when the stream is closed
+  let hasEnded = false;
 
-    // Free resources
+  // Final callback (ensure called once)
+  const _done = (err?: any) => {
+    // Ensure this function called once
+    if (hasEnded) {
+      return;
+    } else {
+      hasEnded = true;
+    }
+
+    // Prevent future output
+    stream.removeListener("data", _next);
+
+    // Free up resources
     stream.destroy();
+
+    // Close this "observable"
+    if (err) {
+      _error(err);
+    } else {
+      _complete();
+    }
+  };
+
+  let tryAgain = isReadable && isWritable;
+
+  const _close = () => {
+    if (tryAgain) {
+      tryAgain = false;
+    } else {
+      _done();
+    }
+  };
+
+  // Listen for data
+  stream
+    .on("data", _next)
+    .on("error", _done)
+    .once("end", _close)
+    .once("finish", _close);
+
+  // Return a subscription able to destroy the stream
+  return new Subscription(() => {
+    if (!hasEnded) {
+      stream.destroy();
+    }
   });
 }
