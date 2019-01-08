@@ -61,7 +61,7 @@ export function subscribeToStream<T = any>(
     if (tryAgain) {
       tryAgain = false;
     } else {
-      // Use setImmediate() to fix Node.js 8.x stream.destroy(error) bug
+      // Node.js 8.x timing bug
       setImmediate(_close);
     }
   };
@@ -70,7 +70,7 @@ export function subscribeToStream<T = any>(
   stream
     .on("data", _next)
     .on("error", _close)
-    .on("close", _close)
+    .on("close", () => setImmediate(_close)) // Node.js 8.x timing bug
     .on("end", _endOrFinish)
     .on("finish", _endOrFinish);
 
