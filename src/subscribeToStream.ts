@@ -1,6 +1,8 @@
 import { Subscription } from "rxjs";
 import { Readable, Writable } from "stream";
 
+import { UnsubscribedError } from "./UnsubscribedError";
+
 // tslint:disable-next-line
 function noop() {}
 
@@ -31,7 +33,7 @@ export function subscribeToStream<T = any>(
   let hasEnded = false;
 
   // Final callback (ensure called once)
-  const _done = (err?: any) => {
+  const _close = (err?: any) => {
     // Ensure this function called once
     if (hasEnded) {
       return;
@@ -46,7 +48,7 @@ export function subscribeToStream<T = any>(
     stream.destroy();
 
     // Close this "observable"
-    if (err) {
+    if (err && !(err instanceof UnsubscribedError)) {
       _error(err);
     } else {
       _complete();
@@ -55,26 +57,27 @@ export function subscribeToStream<T = any>(
 
   let tryAgain = isReadable && isWritable;
 
-  const _close = () => {
+  const _endOrFinish = () => {
     if (tryAgain) {
       tryAgain = false;
     } else {
       // Use setImmediate() to fix Node.js 8.x stream.destroy(error) bug
-      setImmediate(_done);
+      setImmediate(_close);
     }
   };
 
   // Listen for data
   stream
     .on("data", _next)
-    .on("error", _done)
-    .once("end", _close)
-    .once("finish", _close);
+    .on("error", _close)
+    .on("close", _close)
+    .on("end", _endOrFinish)
+    .on("finish", _endOrFinish);
 
   // Return a subscription able to destroy the stream
   return new Subscription(() => {
     if (!hasEnded) {
-      stream.destroy();
+      stream.destroy(new UnsubscribedError());
     }
   });
 }
