@@ -58,4 +58,45 @@ describe("subscribeToStream", () => {
 
     subscribeToStream(writable, null, done, done);
   });
+
+  it("should have fallbacks", done => {
+    const stream = new Readable({
+      objectMode: true,
+      read() {
+        this.push("a");
+        this.push("b");
+        this.push("c");
+        this.push(null);
+        setImmediate(done);
+      }
+    });
+
+    subscribeToStream(stream);
+  });
+
+  it("should unsubscribe from stream without errors", done => {
+    let timer: any;
+    let index = 0;
+
+    const stream = new Readable({
+      objectMode: true,
+      read() {
+        if (!timer) {
+          timer = setInterval(() => {
+            this.push(index++);
+          }, 10);
+        }
+      },
+      destroy(error: any, callback) {
+        clearInterval(timer);
+        callback(error);
+      }
+    });
+
+    const subscription = subscribeToStream(stream, null, done, done);
+
+    setTimeout(() => {
+      subscription.unsubscribe();
+    }, 100);
+  });
 });
