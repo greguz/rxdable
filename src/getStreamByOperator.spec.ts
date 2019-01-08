@@ -2,7 +2,7 @@ import "mocha";
 import { expect } from "chai";
 
 import { Observable } from "rxjs";
-import { count } from "rxjs/operators";
+import { count, map } from "rxjs/operators";
 import { Readable } from "stream";
 import * as pump from "pump";
 
@@ -79,6 +79,39 @@ describe("getStreamByOperator", () => {
     });
 
     const transform = getStreamByOperator(explode());
+
+    pump(readable, transform, error => {
+      if (error instanceof Error && error.message === "STOP") {
+        done();
+      } else {
+        done(error);
+      }
+    });
+  });
+
+  it("shuold handle stream errors", done => {
+    let timer: any;
+
+    const readable = new Readable({
+      objectMode: true,
+      read() {
+        if (!timer) {
+          timer = setInterval(() => {
+            this.push("test");
+          }, 10);
+        }
+      },
+      destroy(error: any, callback) {
+        clearInterval(timer);
+        callback(error);
+      }
+    });
+
+    const transform = getStreamByOperator(map(value => value));
+
+    setTimeout(() => {
+      transform.destroy(new Error("STOP"));
+    }, 100);
 
     pump(readable, transform, error => {
       if (error instanceof Error && error.message === "STOP") {
