@@ -41,11 +41,20 @@ export function subscribeToStream<T = any>(
       hasEnded = true;
     }
 
-    // Prevent future output
-    stream.removeListener("data", _next);
+    stream
+      // Prevent future "uncaught error"
+      .on("error", noop)
+      // Clear listeners
+      .removeListener("data", _next)
+      .removeListener("error", _close)
+      .removeListener("close", _delayedClose)
+      .removeListener("end", _endOrFinish)
+      .removeListener("finish", _endOrFinish);
 
-    // Free up resources
-    stream.destroy();
+    // Free up resources if necessary
+    if (!(err instanceof UnsubscribedError)) {
+      stream.destroy();
+    }
 
     // Close this "observable"
     if (err && !(err instanceof UnsubscribedError)) {
@@ -61,16 +70,17 @@ export function subscribeToStream<T = any>(
     if (tryAgain) {
       tryAgain = false;
     } else {
-      // Node.js 8.x timing bug
       setImmediate(_close);
     }
   };
+
+  const _delayedClose = setImmediate.bind(null, _close);
 
   // Listen for data
   stream
     .on("data", _next)
     .on("error", _close)
-    .on("close", () => setImmediate(_close)) // Node.js 8.x timing bug
+    .on("close", _delayedClose)
     .on("end", _endOrFinish)
     .on("finish", _endOrFinish);
 
