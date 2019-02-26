@@ -3,8 +3,7 @@ import { expect } from "chai";
 
 import { Observable } from "rxjs";
 import { count, map } from "rxjs/operators";
-import { Readable } from "stream";
-import * as pump from "pump";
+import { pipeline, Readable } from "stream";
 
 import { getStreamByOperator } from "./index";
 
@@ -26,7 +25,7 @@ describe("getStreamByOperator", () => {
       expect(data).to.be.equal(3);
     });
 
-    pump(readable, transform, done);
+    pipeline(readable, transform, done);
   });
 
   it("should work with delayed subscription", done => {
@@ -56,7 +55,7 @@ describe("getStreamByOperator", () => {
 
     const transform = getStreamByOperator(delay(100));
 
-    pump(readable, transform, done);
+    pipeline(readable, transform, done);
   });
 
   it("shuold handle observable errors", done => {
@@ -80,7 +79,7 @@ describe("getStreamByOperator", () => {
 
     const transform = getStreamByOperator(explode());
 
-    pump(readable, transform, error => {
+    pipeline(readable, transform, error => {
       if (error instanceof Error && error.message === "STOP") {
         done();
       } else {
@@ -113,7 +112,7 @@ describe("getStreamByOperator", () => {
       transform.destroy(new Error("STOP"));
     }, 100);
 
-    pump(readable, transform, error => {
+    pipeline(readable, transform, error => {
       if (error instanceof Error && error.message === "STOP") {
         done();
       } else {

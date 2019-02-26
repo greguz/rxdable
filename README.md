@@ -4,7 +4,7 @@
 
 Utility lib to work with Node.js streams and Rx.js.
 
-- Node.js >= 8.x
+- Node.js >= 10.x
 - Rx.js 6.x
 - Zero dependencies
 - TypeScript support
