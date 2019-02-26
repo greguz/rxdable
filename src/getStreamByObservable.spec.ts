@@ -2,9 +2,8 @@ import "mocha";
 import { expect } from "chai";
 
 import { fill } from "lodash";
-import { Writable } from "stream";
+import { pipeline, Writable } from "stream";
 import { from, Observable } from "rxjs";
-import * as pump from "pump";
 
 import { getStreamByObservable } from "./index";
 
@@ -25,7 +24,7 @@ describe("getStreamByObservable", () => {
     });
 
     // And pump it (louder)
-    pump(readable, writable, done);
+    pipeline(readable, writable, done);
   });
 
   it("should handle observable errors", done => {
@@ -46,7 +45,7 @@ describe("getStreamByObservable", () => {
     });
 
     // And pump it (louder)
-    pump(readable, writable, error => {
+    pipeline(readable, writable, error => {
       if (error instanceof Error && error.message === "Kill 'Em All") {
         done();
       } else {
@@ -83,7 +82,7 @@ describe("getStreamByObservable", () => {
     });
 
     // And pump it (louder)
-    pump(readable, writable, error => {
+    pipeline(readable, writable, error => {
       expect(unsubscribed).to.equal(true);
 
       if (error instanceof Error && error.message === "Kill 'Em All") {
