@@ -8,13 +8,11 @@ export function toSubscriber<T>(
   error?: (error: any) => void,
   complete?: () => void
 ) {
-  if (typeof arg === "function") {
-    return new Subscriber<T>(arg, error, complete);
-  } else if (arg instanceof Subscriber) {
+  if (arg instanceof Subscriber) {
     return arg;
-  } else if (arg) {
+  } else if (typeof arg === "object") {
     return new Subscriber<T>(arg.next, arg.error, arg.complete);
   } else {
-    return new Subscriber<T>();
+    return new Subscriber<T>(arg, error, complete);
   }
 }
