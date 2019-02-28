@@ -17,7 +17,7 @@ describe("pipeObservableToStream", () => {
       }
     });
 
-    pipeObservableToStream(observable, writable, null, done, done);
+    pipeObservableToStream(observable, writable, undefined, done, done);
   });
 
   it("should handle observable errors", done => {
@@ -37,7 +37,7 @@ describe("pipeObservableToStream", () => {
     pipeObservableToStream(
       observable,
       writable,
-      null,
+      undefined,
       error => {
         if (error instanceof Error && error.message === "STOP") {
           done();
@@ -64,7 +64,7 @@ describe("pipeObservableToStream", () => {
     pipeObservableToStream(
       observable,
       writable,
-      null,
+      undefined,
       error => {
         if (error instanceof Error && error.message === "STOP") {
           done();

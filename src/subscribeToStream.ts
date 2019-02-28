@@ -1,41 +1,47 @@
-import { Subscription } from "rxjs";
+import { Observer, Subscriber, Subscription } from "rxjs";
 import { finished, Readable, Writable } from "stream";
 
+import { toSubscriber } from "./toSubscriber";
 import { UnsubscribedError } from "./UnsubscribedError";
 
-// tslint:disable-next-line
-function noop() {}
+function _subscribeToStream<T = any>(
+  stream: Readable | Writable,
+  subscriber: Subscriber<T>
+) {
+  // Push data listener
+  const push = (data: T) => subscriber.next(data);
+
+  // Listen for incoming data
+  stream.addListener("data", push);
+
+  // Wait for stream to finish
+  finished(stream, err => {
+    // Clear listener
+    stream.removeListener("data", push);
+
+    // Close subscription
+    if (err && !(err instanceof UnsubscribedError)) {
+      subscriber.error(err);
+    } else {
+      subscriber.complete();
+    }
+  });
+
+  // Return a subscription able to destroy the stream
+  return new Subscription(() => stream.destroy(new UnsubscribedError()));
+}
 
 /**
  * Subscribe to a Node.js stream
  */
 export function subscribeToStream<T = any>(
   stream: Readable | Writable,
-  next?: ((value: T) => void) | null | undefined,
-  error?: ((error: any) => void) | null | undefined,
-  complete?: (() => void) | null | undefined
+  observerOrNext?: Partial<Observer<T>> | ((value: T) => void) | null,
+  error?: ((error: any) => void) | null,
+  complete?: (() => void) | null
 ) {
-  // Defaults
-  const _next = next || noop;
-  const _error = error || noop;
-  const _complete = complete || noop;
-
-  // Listen for incoming data
-  stream.addListener("data", _next);
-
-  // Wait for stream to finish
-  finished(stream, err => {
-    // Clear listener
-    stream.removeListener("data", _next);
-
-    // Close subscription
-    if (err && !(err instanceof UnsubscribedError)) {
-      _error(err);
-    } else {
-      _complete();
-    }
-  });
-
-  // Return a subscription able to destroy the stream
-  return new Subscription(() => stream.destroy(new UnsubscribedError()));
+  return _subscribeToStream(
+    stream,
+    toSubscriber(observerOrNext, error, complete)
+  );
 }

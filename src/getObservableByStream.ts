@@ -27,11 +27,6 @@ export function getObservableByStream<T = any>(readable: Readable | null) {
     readable = null;
 
     // Subscribe to stream
-    return subscribeToStream<T>(
-      stream,
-      data => subscriber.next(data),
-      error => subscriber.error(error),
-      () => subscriber.complete()
-    );
+    return subscribeToStream<T>(stream, subscriber);
   });
 }

@@ -28,13 +28,7 @@ export function getOperatorByStream<T = any>(writable: Writable | null) {
       writable = null;
 
       // Pipe the observable to the stream and return the subscription
-      return pipeObservableToStream(
-        observable,
-        stream,
-        data => subscriber.next(data),
-        error => subscriber.error(error),
-        () => subscriber.complete()
-      );
+      return pipeObservableToStream(observable, stream, subscriber);
     });
   };
 }
