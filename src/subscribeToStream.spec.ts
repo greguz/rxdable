@@ -56,7 +56,7 @@ describe("subscribeToStream", () => {
       }
     }, 100);
 
-    subscribeToStream(writable, null, done, done);
+    subscribeToStream(writable, undefined, done, done);
   });
 
   it("should have fallbacks", done => {
@@ -93,7 +93,7 @@ describe("subscribeToStream", () => {
       }
     });
 
-    const subscription = subscribeToStream(stream, null, done, done);
+    const subscription = subscribeToStream(stream, undefined, done, done);
 
     setTimeout(() => {
       subscription.unsubscribe();

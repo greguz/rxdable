@@ -1,20 +1,16 @@
+import { Observable, Observer, Subscriber } from "rxjs";
 import { Writable } from "stream";
-import { Observable } from "rxjs";
 
 import { subscribeToStream } from "./subscribeToStream";
+import { toSubscriber } from "./toSubscriber";
 
-/**
- * Pipe the observable data to the writable stream and subscribe for the result
- */
-export function pipeObservableToStream<T = any>(
+function _pipeObservableToStream<T = any>(
   observable: Observable<any>,
   stream: Writable,
-  next?: ((value: T) => void) | null | undefined,
-  error?: ((error: any) => void) | null | undefined,
-  complete?: (() => void) | null | undefined
+  subscriber: Subscriber<T>
 ) {
   // Proxy the stream output
-  const s0 = subscribeToStream<T>(stream, next, error, complete);
+  const s0 = subscribeToStream<T>(stream, subscriber);
 
   // Subscribe to the observable and write to the stream
   const s1 = observable.subscribe(
@@ -25,4 +21,21 @@ export function pipeObservableToStream<T = any>(
 
   // Combine and return the subscriptions
   return s0.add(s1);
+}
+
+/**
+ * Pipe the observable data to the writable stream and subscribe for the result
+ */
+export function pipeObservableToStream<T = any>(
+  observable: Observable<any>,
+  stream: Writable,
+  observerOrNext?: Partial<Observer<T>> | ((value: T) => void),
+  error?: (error: any) => void,
+  complete?: () => void
+) {
+  return _pipeObservableToStream(
+    observable,
+    stream,
+    toSubscriber(observerOrNext, error, complete)
+  );
 }
