@@ -36,9 +36,9 @@ function _subscribeToStream<T = any>(
  */
 export function subscribeToStream<T = any>(
   stream: Readable | Writable,
-  observerOrNext?: Partial<Observer<T>> | ((value: T) => void),
-  error?: (error: any) => void,
-  complete?: () => void
+  observerOrNext?: Partial<Observer<T>> | ((value: T) => void) | null,
+  error?: ((error: any) => void) | null,
+  complete?: (() => void) | null
 ) {
   return _subscribeToStream(
     stream,

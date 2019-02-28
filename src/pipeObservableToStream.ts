@@ -29,9 +29,9 @@ function _pipeObservableToStream<T = any>(
 export function pipeObservableToStream<T = any>(
   observable: Observable<any>,
   stream: Writable,
-  observerOrNext?: Partial<Observer<T>> | ((value: T) => void),
-  error?: (error: any) => void,
-  complete?: () => void
+  observerOrNext?: Partial<Observer<T>> | ((value: T) => void) | null,
+  error?: ((error: any) => void) | null,
+  complete?: (() => void) | null
 ) {
   return _pipeObservableToStream(
     observable,
