@@ -26,12 +26,7 @@ const { Observable } = require("rxjs");
 
 function fileRead(file, encoding = "utf8") {
   return new Observable(subscriber => {
-    return subscribeToStream(
-      createReadStream(file, encoding),
-      chunk => subscriber.next(chunk),
-      error => subscriber.error(error),
-      () => subscriber.complete()
-    );
+    return subscribeToStream(createReadStream(file, encoding), subscriber);
   });
 }
 ```
@@ -70,9 +65,7 @@ function fileWrite(file, encoding = "utf8") {
       return pipeObservableToStream(
         observable,
         createWriteStream(file, encoding),
-        null,
-        error => subscriber.error(error),
-        () => subscriber.complete()
+        subscriber
       );
     });
   };
