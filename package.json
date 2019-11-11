@@ -29,22 +29,22 @@
   "author": "Giacomo Gregoletto",
   "license": "MIT",
   "devDependencies": {
-    "@types/chai": "^4.2.0",
-    "@types/lodash": "^4.14.138",
+    "@types/chai": "^4.2.4",
+    "@types/lodash": "^4.14.146",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.12.27",
     "chai": "^4.2.0",
-    "coveralls": "^3.0.6",
-    "husky": "^3.0.4",
+    "coveralls": "^3.0.7",
+    "husky": "^3.0.9",
     "lodash": "^4.17.15",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "rimraf": "^3.0.0",
-    "rxjs": "^6.5.2",
-    "source-map-support": "^0.5.13",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.19.0",
-    "typescript": "^3.6.2"
+    "rxjs": "^6.5.3",
+    "source-map-support": "^0.5.16",
+    "ts-node": "^8.5.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
   },
   "peerDependencies": {
     "rxjs": "^6.0.0"
