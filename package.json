@@ -1,6 +1,6 @@
 {
   "name": "rxdable",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Utility lib to work with Node.js streams and Rx.js",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
