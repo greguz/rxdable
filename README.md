@@ -17,7 +17,7 @@ const { getStreamByObservable } = require("rxdable");
 const readableStream = getStreamByObservable(observable);
 ```
 
-## Readable stream to Observable (recommend way)
+## Readable stream to Observable
 
 ```javascript
 const { createReadStream } = require("fs");
@@ -31,7 +31,7 @@ function fileRead(file, encoding = "utf8") {
 }
 ```
 
-## Readable stream to Observable (fast way)
+## Readable stream to Observable (faster way)
 
 ```javascript
 const { getObservableByStream } = require("rxdable");
@@ -39,9 +39,7 @@ const { getObservableByStream } = require("rxdable");
 const observable = getObservableByStream(readableStream);
 ```
 
-The usage of this API is discouraged, because a Node.js stream is able to be consumed just one time, but an Observable is able to be subscribed more than once.
-
-So this API create an Observable that is able to be subscribed just one time.
+**WARNING**: This function will create an Observable ables to be subscribed just one time.
 
 ## Operator to Transform stream
 
@@ -52,7 +50,7 @@ const { getStreamByOperator } = require("rxdable");
 const transformStream = getStreamByOperator(count());
 ```
 
-## Writable/Duplex/Transform stream to operator (recommend way)
+## Writable/Duplex/Transform stream to operator
 
 ```javascript
 const { createWriteStream } = require("fs");
@@ -72,7 +70,7 @@ function fileWrite(file, encoding = "utf8") {
 }
 ```
 
-## Writable/Duplex/Transform stream to operator (fast way)
+## Writable/Duplex/Transform stream to operator (faster way)
 
 ```javascript
 const { getOperatorByStream } = require("rxdable");
@@ -80,4 +78,4 @@ const { getOperatorByStream } = require("rxdable");
 const operator = getOperatorByStream(transformStream);
 ```
 
-Same as **getObservableByStream** API.
+**WARNING**: This function will create an Operator ables to be uses just one time.
