@@ -21,7 +21,7 @@ function _pipeObservableToStream<T = any> (
 }
 
 /**
- * It pipes an Observable into a Writable stream and returns a Subscription.
+ * It pipes an Observable into a Writable/Duplex/Transform stream and returns a Subscription.
  */
 export function pipeObservableToStream<T = any> (
   observable: Observable<any>,

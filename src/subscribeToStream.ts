@@ -30,7 +30,7 @@ function _subscribeToStream<T = any> (
 }
 
 /**
- * It subscribes to a Readable stream and returns a Subscription.
+ * It subscribes to a stream and returns a Subscription.
  */
 export function subscribeToStream<T = any> (
   stream: Readable | Writable,
