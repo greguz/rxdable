@@ -1,38 +1,38 @@
-import { Observer, Subscriber, Subscription } from "rxjs";
-import { finished, Readable, Writable } from "stream";
+import { Observer, Subscriber, Subscription } from 'rxjs'
+import { finished, Readable, Writable } from 'stream'
 
-import { toSubscriber } from "./toSubscriber";
+import { toSubscriber } from './toSubscriber'
 
-function _subscribeToStream<T = any>(
+function _subscribeToStream<T = any> (
   stream: Readable | Writable,
   subscriber: Subscriber<T>
 ) {
   let unsubscribed = false
 
-  const listener = (data: T) => subscriber.next(data);
+  const listener = (data: T) => subscriber.next(data)
 
   finished(stream, err => {
-    stream.removeListener("data", listener);
+    stream.removeListener('data', listener)
 
     if (err && !unsubscribed) {
-      subscriber.error(err);
+      subscriber.error(err)
     } else {
-      subscriber.complete();
+      subscriber.complete()
     }
-  });
+  })
 
-  stream.addListener("data", listener);
+  stream.addListener('data', listener)
 
   return new Subscription(() => {
     unsubscribed = true
     stream.destroy()
-  });
+  })
 }
 
 /**
  * It subscribes to a Readable stream and returns a Subscription.
  */
-export function subscribeToStream<T = any>(
+export function subscribeToStream<T = any> (
   stream: Readable | Writable,
   observerOrNext?: Partial<Observer<T>> | ((value: T) => void) | null,
   error?: ((error: any) => void) | null,
@@ -41,5 +41,5 @@ export function subscribeToStream<T = any>(
   return _subscribeToStream(
     stream,
     toSubscriber(observerOrNext, error, complete)
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import { Observable, OperatorFunction, Subscriber, Subscription } from "rxjs";
+import { Observable, OperatorFunction, Subscriber, Subscription } from 'rxjs'
 import { Transform } from 'stream'
 
 class Tranxform extends Transform {
@@ -25,28 +25,28 @@ class Tranxform extends Transform {
   /**
    * @constructor
    */
-  constructor(...operators: Array<OperatorFunction<any, any>>) {
-    super({ objectMode: true });
+  constructor (...operators: Array<OperatorFunction<any, any>>) {
+    super({ objectMode: true })
 
     // Create a source observable
     const sourceObservable = new Observable<any>(subscriber => {
       // Save the source subscriber
-      this._subscriber = subscriber;
+      this._subscriber = subscriber
       // Emit event to continue the transformation process
-      this.emit("subscribed", subscriber);
-    });
+      this.emit('subscribed', subscriber)
+    })
 
     // Apply the operators to the source observable and save the result
     this._observable = operators.reduce(
       (observable, operator) => operator(observable),
       sourceObservable
-    );
+    )
   }
 
   /**
    * Method to accept input and produce output
    */
-  public _transform(
+  public _transform (
     input: any,
     encoding: string,
     callback: (error?: any) => void
@@ -55,57 +55,57 @@ class Tranxform extends Transform {
     if (!this._subscription) {
       this._subscription = this._observable.subscribe(
         output => {
-          this.push(output);
+          this.push(output)
         },
         error => {
-          process.nextTick(() => this.emit("error", error));
+          process.nextTick(() => this.emit('error', error))
         },
         () => {
-          this._callback();
+          this._callback()
         }
-      );
+      )
     }
 
     // Process next chunk util
-    function next(subscriber: Subscriber<any>) {
-      subscriber.next(input);
-      callback();
+    function next (subscriber: Subscriber<any>) {
+      subscriber.next(input)
+      callback()
     }
 
     // Handle missing source subscriber
     if (this._subscriber) {
-      next(this._subscriber);
+      next(this._subscriber)
     } else {
-      this.once("subscribed", next);
+      this.once('subscribed', next)
     }
   }
 
   /**
    * Called before the stream closes
    */
-  public _final(callback: (error?: any) => void) {
+  public _final (callback: (error?: any) => void) {
     // Save the final callback
-    this._callback = callback;
+    this._callback = callback
     // Close the source observable
-    this._subscriber.complete();
+    this._subscriber.complete()
   }
 
   /**
    * Called by the internal Readable class methods
    */
-  public _destroy(error: any, callback: (error?: any) => void) {
+  public _destroy (error: any, callback: (error?: any) => void) {
     if (this._subscription && !this._subscription.closed) {
-      this._subscription.unsubscribe();
+      this._subscription.unsubscribe()
     }
-    callback(error);
+    callback(error)
   }
 }
 
 /**
  * It creates a Transform stream from a list of operators.
  */
-export function getStreamByOperator(
+export function getStreamByOperator (
   ...operators: Array<OperatorFunction<any, any>>
 ): Transform {
-  return new Tranxform(...operators);
+  return new Tranxform(...operators)
 }
