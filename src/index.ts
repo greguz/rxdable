@@ -1,9 +1,6 @@
-export * from "./getObservableByStream";
-export * from "./getOperatorByStream";
-export * from "./getStreamByObservable";
-export * from "./getStreamByOperator";
-export * from "./pipeObservableToStream";
-export * from "./Rxdable";
-export * from "./subscribeToStream";
-export * from "./Tranxform";
-export * from "./TypedReadable";
+export { getObservableByStream } from "./getObservableByStream";
+export { getOperatorByStream } from "./getOperatorByStream";
+export { getStreamByObservable } from "./getStreamByObservable";
+export { getStreamByOperator } from "./getStreamByOperator";
+export { pipeObservableToStream } from "./pipeObservableToStream";
+export { subscribeToStream } from "./subscribeToStream";

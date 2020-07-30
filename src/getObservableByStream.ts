@@ -4,9 +4,9 @@ import { Observable } from "rxjs";
 import { subscribeToStream } from "./subscribeToStream";
 
 /**
- * Get an Observable from a Readable/Duplex/Transform stream instance
+ * It creates an Observable from a Readable stream.
  */
-export function getObservableByStream<T = any>(readable: Readable) {
+export function getObservableByStream<T = any>(readable: Readable): Observable<T> {
   return new Observable<T>(subscriber =>
     subscribeToStream<T>(readable, subscriber)
   );

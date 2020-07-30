@@ -2,44 +2,42 @@ import { Observer, Subscriber, Subscription } from "rxjs";
 import { finished, Readable, Writable } from "stream";
 
 import { toSubscriber } from "./toSubscriber";
-import { UnsubscribedError } from "./UnsubscribedError";
 
 function _subscribeToStream<T = any>(
   stream: Readable | Writable,
   subscriber: Subscriber<T>
 ) {
-  // Push data listener
-  const push = (data: T) => subscriber.next(data);
+  let unsubscribed = false
 
-  // Listen for incoming data
-  stream.addListener("data", push);
+  const listener = (data: T) => subscriber.next(data);
 
-  // Wait for stream to finish
   finished(stream, err => {
-    // Clear listener
-    stream.removeListener("data", push);
+    stream.removeListener("data", listener);
 
-    // Close subscription
-    if (err && !(err instanceof UnsubscribedError)) {
+    if (err && !unsubscribed) {
       subscriber.error(err);
     } else {
       subscriber.complete();
     }
   });
 
-  // Return a subscription able to destroy the stream
-  return new Subscription(() => stream.destroy(new UnsubscribedError()));
+  stream.addListener("data", listener);
+
+  return new Subscription(() => {
+    unsubscribed = true
+    stream.destroy()
+  });
 }
 
 /**
- * Subscribe to a Node.js stream
+ * It subscribes to a Readable stream and returns a Subscription.
  */
 export function subscribeToStream<T = any>(
   stream: Readable | Writable,
   observerOrNext?: Partial<Observer<T>> | ((value: T) => void) | null,
   error?: ((error: any) => void) | null,
   complete?: (() => void) | null
-) {
+): Subscription {
   return _subscribeToStream(
     stream,
     toSubscriber(observerOrNext, error, complete)

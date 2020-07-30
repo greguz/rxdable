@@ -1,8 +1,5 @@
 import { Observer, Subscriber } from "rxjs";
 
-/**
- * Map the arguments to a subscriber instance
- */
 export function toSubscriber<T>(
   arg?: Partial<Observer<T>> | ((value: T) => void) | null,
   error?: ((error: any) => void) | null,

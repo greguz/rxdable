@@ -1,12 +1,12 @@
 import { Writable } from "stream";
-import { Observable } from "rxjs";
+import { Observable, OperatorFunction } from "rxjs";
 
 import { pipeObservableToStream } from "./pipeObservableToStream";
 
 /**
- * Create a operator froma Writable or Duplex or Transform stream
+ * It creates an Operator from a Writable stream.
  */
-export function getOperatorByStream<T = any>(writable: Writable) {
+export function getOperatorByStream<T = any>(writable: Writable): OperatorFunction<any, any> {
   return (observable: Observable<any>) => {
     return new Observable<T>(subscriber =>
       pipeObservableToStream(observable, writable, subscriber)
