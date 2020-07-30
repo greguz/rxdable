@@ -1,7 +1,10 @@
 language: node_js
+
 node_js:
   - "10"
   - "12"
+  - "14"
 
 sudo: false
-after_success: npm run coverage
+
+after_success: npm run coverage && npm run coveralls

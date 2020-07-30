@@ -1,94 +1,91 @@
-import "mocha";
-import { expect } from "chai";
+import test from 'ava'
 
-import { pipeline, Writable } from "stream";
-import { from, Observable } from "rxjs";
+import { pipeline, Writable } from 'stream'
+import { from, Observable } from 'rxjs'
 
-import { getStreamByObservable } from "./index";
+import { getStreamByObservable } from './index'
 
-describe("getStreamByObservable", () => {
-  it("should work", done => {
-    // Fast-firing observable
-    const observable = from(([] as any[]).fill('x', 0, 50));
+test.cb('should work', t => {
+  // Fast-firing observable
+  const observable = from(([] as any[]).fill('x', 0, 50))
 
-    // Cast to readable
-    const readable = getStreamByObservable(observable);
+  // Cast to readable
+  const readable = getStreamByObservable(observable)
 
-    // Slow-ass writable
-    const writable = new Writable({
-      objectMode: true,
-      write(chunk, encoding, callback) {
-        setTimeout(() => callback(), 10);
-      }
-    });
+  // Slow-ass writable
+  const writable = new Writable({
+    objectMode: true,
+    write (chunk, encoding, callback) {
+      setTimeout(() => callback(), 10)
+    }
+  })
 
-    // And pump it (louder)
-    pipeline(readable, writable, done);
-  });
+  // And pump it (louder)
+  pipeline(readable, writable, t.end)
+})
 
-  it("should handle observable errors", done => {
-    // Observable that will explode
-    const observable = new Observable<number>(subscriber => {
-      setTimeout(() => subscriber.error(new Error("Kill 'Em All")), 10);
-    });
+test.cb('should handle observable errors', t => {
+  // Observable that will explode
+  const observable = new Observable<number>(subscriber => {
+    setTimeout(() => subscriber.error(new Error("Kill 'Em All")), 10)
+  })
 
-    // Convert to readable
-    const readable = getStreamByObservable(observable);
+  // Convert to readable
+  const readable = getStreamByObservable(observable)
 
-    // Empty writable
-    const writable = new Writable({
-      objectMode: true,
-      write(chunk, encoding, callback) {
-        callback();
-      }
-    });
+  // Empty writable
+  const writable = new Writable({
+    objectMode: true,
+    write (chunk, encoding, callback) {
+      callback()
+    }
+  })
 
-    // And pump it (louder)
-    pipeline(readable, writable, error => {
-      if (error instanceof Error && error.message === "Kill 'Em All") {
-        done();
-      } else {
-        done(error);
-      }
-    });
-  });
+  // And pump it (louder)
+  pipeline(readable, writable, error => {
+    if (error instanceof Error && error.message === "Kill 'Em All") {
+      t.end()
+    } else {
+      t.end(error)
+    }
+  })
+})
 
-  it("should unsubscribe from the observable", done => {
-    // Subscription status
-    let unsubscribed = false;
+test.cb('should unsubscribe from the observable', t => {
+  // Subscription status
+  let unsubscribed = false
 
-    // Infinite observable
-    const observable = new Observable<number>(subscriber => {
-      let i = 0;
-      const timer = setInterval(() => {
-        subscriber.next(i++);
-      }, 100);
-      return function unsubscribe() {
-        unsubscribed = true;
-        clearInterval(timer);
-      };
-    });
+  // Infinite observable
+  const observable = new Observable<number>(subscriber => {
+    let i = 0
+    const timer = setInterval(() => {
+      subscriber.next(i++)
+    }, 100)
+    return function unsubscribe () {
+      unsubscribed = true
+      clearInterval(timer)
+    }
+  })
 
-    // Convert to readable
-    const readable = getStreamByObservable(observable);
+  // Convert to readable
+  const readable = getStreamByObservable(observable)
 
-    // Will-explode writable
-    const writable = new Writable({
-      objectMode: true,
-      write(chunk, encoding, callback) {
-        callback(chunk >= 10 ? new Error("Kill 'Em All") : null);
-      }
-    });
+  // Will-explode writable
+  const writable = new Writable({
+    objectMode: true,
+    write (chunk, encoding, callback) {
+      callback(chunk >= 10 ? new Error("Kill 'Em All") : null)
+    }
+  })
 
-    // And pump it (louder)
-    pipeline(readable, writable, error => {
-      expect(unsubscribed).to.equal(true);
+  // And pump it (louder)
+  pipeline(readable, writable, error => {
+    t.true(unsubscribed)
 
-      if (error instanceof Error && error.message === "Kill 'Em All") {
-        done();
-      } else {
-        done(error);
-      }
-    });
-  });
-});
+    if (error instanceof Error && error.message === "Kill 'Em All") {
+      t.end()
+    } else {
+      t.end(error)
+    }
+  })
+})
