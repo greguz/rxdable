@@ -1,7 +1,6 @@
 import "mocha";
 import { expect } from "chai";
 
-import { fill } from "lodash";
 import { pipeline, Writable } from "stream";
 import { from, Observable } from "rxjs";
 
@@ -10,7 +9,7 @@ import { getStreamByObservable } from "./index";
 describe("getStreamByObservable", () => {
   it("should work", done => {
     // Fast-firing observable
-    const observable = from(fill(new Array(50), "x"));
+    const observable = from(([] as any[]).fill('x', 0, 50));
 
     // Cast to readable
     const readable = getStreamByObservable(observable);
