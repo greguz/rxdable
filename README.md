@@ -12,31 +12,31 @@ Utility lib to work with Node.js streams and Rx.js.
 ## Observable to Readable stream
 
 ```javascript
-const { getStreamByObservable } = require("rxdable");
+const { getStreamByObservable } = require("rxdable")
 
-const readableStream = getStreamByObservable(observable);
+const readableStream = getStreamByObservable(observable)
 ```
 
 ## Readable stream to Observable
 
 ```javascript
-const { createReadStream } = require("fs");
-const { subscribeToStream } = require("rxdable");
-const { Observable } = require("rxjs");
+const { createReadStream } = require("fs")
+const { subscribeToStream } = require("rxdable")
+const { Observable } = require("rxjs")
 
 function fileRead(file, encoding = "utf8") {
   return new Observable(subscriber => {
-    return subscribeToStream(createReadStream(file, encoding), subscriber);
-  });
+    return subscribeToStream(createReadStream(file, encoding), subscriber)
+  })
 }
 ```
 
 ## Readable stream to Observable (faster way)
 
 ```javascript
-const { getObservableByStream } = require("rxdable");
+const { getObservableByStream } = require("rxdable")
 
-const observable = getObservableByStream(readableStream);
+const observable = getObservableByStream(readableStream)
 ```
 
 **WARNING**: This function will create an Observable ables to be subscribed just one time.
@@ -44,18 +44,39 @@ const observable = getObservableByStream(readableStream);
 ## Operator to Transform stream
 
 ```javascript
-const { count } = require("rxjs/operators");
-const { getStreamByOperator } = require("rxdable");
+const { count } = require("rxjs/operators")
+const { getStreamByOperator } = require("rxdable")
 
-const transformStream = getStreamByOperator(count());
+const countStream = getStreamByOperator(count())
+```
+
+Multiple operators are supported:
+
+```javascript
+const { map } = require("rxjs/operators")
+const { getStreamByOperator } = require("rxdable")
+
+const firstUppercasedLetterStream = getStreamByOperator(
+  map(value => value.toString()),
+  map(value => value.substr(0, 1)),
+  map(value => value.toUpperCase())
+)
+```
+
+Passthrough (no operators) is supported:
+
+```javascript
+const { getStreamByOperator } = require("rxdable")
+
+const passthroughStream = getStreamByOperator()
 ```
 
 ## Writable/Duplex/Transform stream to operator
 
 ```javascript
-const { createWriteStream } = require("fs");
-const { pipeObservableToStream } = require("rxdable");
-const { Observable } = require("rxjs");
+const { createWriteStream } = require("fs")
+const { pipeObservableToStream } = require("rxdable")
+const { Observable } = require("rxjs")
 
 function fileWrite(file, encoding = "utf8") {
   return observable => {
@@ -64,18 +85,18 @@ function fileWrite(file, encoding = "utf8") {
         observable,
         createWriteStream(file, encoding),
         subscriber
-      );
-    });
-  };
+      )
+    })
+  }
 }
 ```
 
 ## Writable/Duplex/Transform stream to operator (faster way)
 
 ```javascript
-const { getOperatorByStream } = require("rxdable");
+const { getOperatorByStream } = require("rxdable")
 
-const operator = getOperatorByStream(transformStream);
+const operator = getOperatorByStream(transformStream)
 ```
 
 **WARNING**: This function will create an Operator ables to be used just one time.
