@@ -78,4 +78,4 @@ const { getOperatorByStream } = require("rxdable");
 const operator = getOperatorByStream(transformStream);
 ```
 
-**WARNING**: This function will create an Operator ables to be uses just one time.
+**WARNING**: This function will create an Operator ables to be used just one time.
