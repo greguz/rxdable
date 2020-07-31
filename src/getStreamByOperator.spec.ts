@@ -1,120 +1,126 @@
 import test from 'ava'
 
 import { Observable } from 'rxjs'
-import { count, map } from 'rxjs/operators'
-import { pipeline, Readable } from 'stream'
+import { map } from 'rxjs/operators'
 
 import { getStreamByOperator } from './index'
 
-test.cb('should work with aggregate operators', t => {
-  const readable = new Readable({
-    objectMode: true,
-    read () {
-      this.push('a')
-      this.push('b')
-      this.push('c')
-      this.push(null)
-    }
-  })
+test.cb('multiple operators', t => {
+  t.plan(1)
 
-  const transform = getStreamByOperator(count())
+  const stream = getStreamByOperator(
+    map(value => value * 2),
+    map(value => value * 2),
+    map(value => value * 2)
+  )
 
-  transform.once('data', data => {
-    t.is(data, 3)
-  })
+  stream
+    .on('error', t.end)
+    .on('data', value => t.is(value, 16))
+    .on('finish', () => t.end())
 
-  pipeline(readable, transform, t.end)
+  stream.write(2)
+  stream.end()
 })
 
-test.cb('should work with delayed subscription', t => {
-  function delay<T> (ms: number) {
-    return (source: Observable<T>) => {
-      return new Observable<T>(subscriber => {
-        setTimeout(() => {
-          source.subscribe(
-            data => subscriber.next(data),
-            error => subscriber.error(error),
-            () => subscriber.complete()
-          )
-        }, ms)
+test.cb('no chunks', t => {
+  const stream = getStreamByOperator()
+
+  stream
+    .on('error', t.end)
+    .on('data', () => t.fail())
+    .on('finish', () => t.end())
+
+  stream.end()
+})
+
+test.cb('async subscription', t => {
+  t.plan(3)
+
+  const stream = getStreamByOperator(source => {
+    return new Observable(subscriber => {
+      setImmediate(() => {
+        source.subscribe(
+          value => subscriber.next(value),
+          error => subscriber.error(error),
+          () => subscriber.complete()
+        )
       })
-    }
-  }
-
-  const readable = new Readable({
-    objectMode: true,
-    read () {
-      this.push('a')
-      this.push('b')
-      this.push('c')
-      this.push(null)
-    }
+    })
   })
 
-  const transform = getStreamByOperator(delay(100))
+  stream
+    .on('error', t.end)
+    .on('data', data => t.is(data, 42))
+    .on('finish', () => t.end())
 
-  pipeline(readable, transform, t.end)
+  stream.write(42)
+  stream.write(42)
+  stream.write(42)
+  stream.end()
 })
 
-test.cb('shuold handle observable errors', t => {
-  function explode<T> () {
-    return () => {
-      return new Observable<T>(subscriber => {
+test.cb('destroy (no chunks)', t => {
+  const stream = getStreamByOperator()
+
+  stream
+    .on('error', t.end)
+    .on('data', () => t.fail())
+    .on('close', () => t.end())
+
+  stream.destroy()
+})
+
+test.cb('destroy (unsubscribe)', t => {
+  const stream = getStreamByOperator(source => {
+    return new Observable(subscriber => {
+      source.subscribe(
+        value => subscriber.next(value),
+        error => subscriber.error(error),
+        () => subscriber.complete()
+      )
+
+      return () => {
+        t.end()
+      }
+    })
+  })
+
+  stream.on('error', t.end)
+
+  stream.on('data', data => {
+    t.is(data, 42)
+    stream.destroy()
+  })
+
+  stream.write(42)
+})
+
+test.cb('errors', t => {
+  t.plan(2)
+
+  const stream = getStreamByOperator(source => {
+    return new Observable(subscriber => {
+      source.subscribe(
+        value => subscriber.next(value),
+        error => subscriber.error(error),
+        () => subscriber.complete()
+      )
+
+      setImmediate(() => {
         subscriber.error(new Error('STOP'))
       })
-    }
-  }
-
-  const readable = new Readable({
-    objectMode: true,
-    read () {
-      this.push('a')
-      this.push('b')
-      this.push('c')
-      this.push(null)
-    }
+    })
   })
 
-  const transform = getStreamByOperator(explode())
-
-  pipeline(readable, transform, error => {
-    if (error instanceof Error && error.message === 'STOP') {
-      t.end()
-    } else {
-      t.end(error)
-    }
-  })
-})
-
-test.cb('shuold handle stream errors', t => {
-  let timer: any
-
-  const readable = new Readable({
-    objectMode: true,
-    read () {
-      if (!timer) {
-        timer = setInterval(() => {
-          this.push('test')
-        }, 10)
-      }
-    },
-    destroy (error: any, callback) {
-      clearInterval(timer)
-      callback(error)
-    }
+  stream.on('data', data => {
+    t.is(data, 42)
   })
 
-  const transform = getStreamByOperator(map(value => value))
-
-  setTimeout(() => {
-    transform.destroy(new Error('STOP'))
-  }, 100)
-
-  pipeline(readable, transform, error => {
-    if (error instanceof Error && error.message === 'STOP') {
-      t.end()
-    } else {
-      t.end(error)
-    }
+  stream.on('error', error => {
+    t.is(error.message, 'STOP')
+    t.end()
   })
+
+  stream.write(42)
 })

@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "outDir": "dist",
     "rootDir": "src",
+    "strict": true,
     "strictNullChecks": true,
-    "target": "es6"
+    "target": "ES6"
   },
   "include": ["src/index.ts"]
 }
