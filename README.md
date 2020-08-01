@@ -1,6 +1,6 @@
 # rxdable
 
-[![npm version](https://badge.fury.io/js/rxdable.svg)](https://badge.fury.io/js/rxdable) [![Build Status](https://travis-ci.com/greguz/rxdable.svg?branch=master)](https://travis-ci.com/greguz/rxdable) [![Coverage Status](https://coveralls.io/repos/github/greguz/rxdable/badge.svg?branch=master)](https://coveralls.io/github/greguz/rxdable?branch=master) [![Dependencies Status](https://david-dm.org/greguz/rxdable.svg)](https://david-dm.org/greguz/rxdable.svg)
+[![npm version](https://badge.fury.io/js/rxdable.svg)](https://badge.fury.io/js/rxdable) [![Build Status](https://travis-ci.com/greguz/rxdable.svg?branch=master)](https://travis-ci.com/greguz/rxdable) [![Coverage Status](https://coveralls.io/repos/github/greguz/rxdable/badge.svg?branch=master)](https://coveralls.io/github/greguz/rxdable?branch=master) [![Dependencies Status](https://david-dm.org/greguz/rxdable.svg)](https://david-dm.org/greguz/rxdable.svg) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 Utility lib to work with Node.js streams and Rx.js.
 
@@ -12,7 +12,7 @@ Utility lib to work with Node.js streams and Rx.js.
 ## Observable to Readable stream
 
 ```javascript
-const { getStreamByObservable } = require("rxdable")
+const { getStreamByObservable } = require('rxdable')
 
 const readableStream = getStreamByObservable(observable)
 ```
@@ -20,13 +20,16 @@ const readableStream = getStreamByObservable(observable)
 ## Readable stream to Observable
 
 ```javascript
-const { createReadStream } = require("fs")
-const { subscribeToStream } = require("rxdable")
-const { Observable } = require("rxjs")
+const { createReadStream } = require('fs')
+const { subscribeToStream } = require('rxdable')
+const { Observable } = require('rxjs')
 
-function fileRead(file, encoding = "utf8") {
+function fileRead(file, encoding = 'utf8') {
   return new Observable(subscriber => {
-    return subscribeToStream(createReadStream(file, encoding), subscriber)
+    return subscribeToStream(
+      createReadStream(file, encoding),
+      subscriber
+    )
   })
 }
 ```
@@ -34,7 +37,7 @@ function fileRead(file, encoding = "utf8") {
 ## Readable stream to Observable (faster way)
 
 ```javascript
-const { getObservableByStream } = require("rxdable")
+const { getObservableByStream } = require('rxdable')
 
 const observable = getObservableByStream(readableStream)
 ```
@@ -43,18 +46,20 @@ const observable = getObservableByStream(readableStream)
 
 ## Operator to Transform stream
 
+Single operator:
+
 ```javascript
-const { count } = require("rxjs/operators")
-const { getStreamByOperator } = require("rxdable")
+const { count } = require('rxjs/operators')
+const { getStreamByOperator } = require('rxdable')
 
 const countStream = getStreamByOperator(count())
 ```
 
-Multiple operators are supported:
+Multiple operators:
 
 ```javascript
-const { map } = require("rxjs/operators")
-const { getStreamByOperator } = require("rxdable")
+const { map } = require('rxjs/operators')
+const { getStreamByOperator } = require('rxdable')
 
 const firstUppercasedLetterStream = getStreamByOperator(
   map(value => value.toString()),
@@ -63,10 +68,10 @@ const firstUppercasedLetterStream = getStreamByOperator(
 )
 ```
 
-Passthrough (no operators) is supported:
+No operators (passthrough):
 
 ```javascript
-const { getStreamByOperator } = require("rxdable")
+const { getStreamByOperator } = require('rxdable')
 
 const passthroughStream = getStreamByOperator()
 ```
@@ -74,11 +79,11 @@ const passthroughStream = getStreamByOperator()
 ## Writable/Duplex/Transform stream to operator
 
 ```javascript
-const { createWriteStream } = require("fs")
-const { pipeObservableToStream } = require("rxdable")
-const { Observable } = require("rxjs")
+const { createWriteStream } = require('fs')
+const { pipeObservableToStream } = require('rxdable')
+const { Observable } = require('rxjs')
 
-function fileWrite(file, encoding = "utf8") {
+function fileWrite(file, encoding = 'utf8') {
   return observable => {
     return new Observable(subscriber => {
       return pipeObservableToStream(
@@ -94,7 +99,7 @@ function fileWrite(file, encoding = "utf8") {
 ## Writable/Duplex/Transform stream to operator (faster way)
 
 ```javascript
-const { getOperatorByStream } = require("rxdable")
+const { getOperatorByStream } = require('rxdable')
 
 const operator = getOperatorByStream(transformStream)
 ```
